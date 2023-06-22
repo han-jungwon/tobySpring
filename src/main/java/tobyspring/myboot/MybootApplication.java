@@ -3,6 +3,7 @@ package tobyspring.myboot;
 import org.apache.catalina.startup.Tomcat;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletPath;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
@@ -27,16 +28,27 @@ import java.io.IOException;
 @Configuration
 @ComponentScan
 public class MybootApplication {
+    @Bean
+    public ServletWebServerFactory servletWebServerFactory() {
+        return new TomcatServletWebServerFactory();
+    }
+
+    @Bean
+    public DispatcherServlet dispatcherServlet() {
+        return new DispatcherServlet();
+    }
     public static void main(String[] args) {
         AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext() {
             @Override
             protected void onRefresh() {
                 super.onRefresh();
 
-                ServletWebServerFactory serverFactory = new TomcatServletWebServerFactory();
+                ServletWebServerFactory serverFactory = this.getBean(ServletWebServerFactory.class);
+                DispatcherServlet dispatcherServlet = this.getBean(DispatcherServlet.class);
+                dispatcherServlet.setApplicationContext(this);
+
                 WebServer webServer = serverFactory.getWebServer(servletContext -> {
-                    servletContext.addServlet("dispatcherServlet",
-                                    new DispatcherServlet(this))
+                    servletContext.addServlet("dispatcherServlet", dispatcherServlet)
                             .addMapping("/*");
                 });
                 webServer.start();
