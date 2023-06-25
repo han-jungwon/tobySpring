@@ -25,36 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Configuration
-@ComponentScan
+@MySpringBootAnnotation
 public class MybootApplication {
-    @Bean
-    public ServletWebServerFactory servletWebServerFactory() {
-        return new TomcatServletWebServerFactory();
-    }
 
-    @Bean
-    public DispatcherServlet dispatcherServlet() {
-        return new DispatcherServlet();
-    }
     public static void main(String[] args) {
-        AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext() {
-            @Override
-            protected void onRefresh() {
-                super.onRefresh();
-
-                ServletWebServerFactory serverFactory = this.getBean(ServletWebServerFactory.class);
-                DispatcherServlet dispatcherServlet = this.getBean(DispatcherServlet.class);
-                dispatcherServlet.setApplicationContext(this);
-
-                WebServer webServer = serverFactory.getWebServer(servletContext -> {
-                    servletContext.addServlet("dispatcherServlet", dispatcherServlet)
-                            .addMapping("/*");
-                });
-                webServer.start();
-            }
-        };
-        applicationContext.register(MybootApplication.class);
-        applicationContext.refresh();
+        SpringApplication.run(MybootApplication.class, args);
     }
 }
