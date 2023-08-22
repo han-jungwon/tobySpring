@@ -1,6 +1,7 @@
 package tobyspring.config.autoconfig;
 
 import com.fasterxml.jackson.databind.util.ClassUtil;
+import org.apache.catalina.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -15,20 +16,16 @@ import tobyspring.config.MyAutoConfiguration;
 @MyAutoConfiguration
 @ConditionalMyOnClass("org.apache.catalina.startup.Tomcat")
 public class TomcatWebServerConfig {
-    @Value("${contextPath:}")
-    String contextPath;
-    @Value("${port:8080}")
-    int port;
-
     @Bean("tomcatWebServerFactory")
     @ConditionalOnMissingBean
-    public ServletWebServerFactory servletWebServerFactory() {
+    public ServletWebServerFactory servletWebServerFactory(ServerProperties properties) {
         TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
 
-        factory.setContextPath(this.contextPath + "dddd");
-        factory.setPort(port);
+        factory.setContextPath(properties.getContextPath());
+        factory.setPort(properties.getPort());
 
         return factory;
     }
+
 
 }
