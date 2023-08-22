@@ -1,8 +1,14 @@
 package tobyspring.config.autoconfig;
 
+import org.springframework.stereotype.Component;
+import tobyspring.config.MyAutoConfigurationProperties;
+
+@MyAutoConfigurationProperties(prefix = "server")
 public class ServerProperties {
 
     private String contextPath;
+
+    private int port;
 
     public String getContextPath() {
         return contextPath;
@@ -19,9 +25,6 @@ public class ServerProperties {
     public void setPort(int port) {
         this.port = port;
     }
-
-    private int port;
-
 
 
 
